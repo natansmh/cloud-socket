@@ -2,19 +2,6 @@
 #include "../include/common.h"
 #include "../include/server.h"
 
-/* Helpers Region */
-static bool valid_call(int argc) {
-    return argc == 2;
-}
-
-static bool valid_socket(int sock) {
-    return sock != -1;
-}
-
-static bool valid_client(int client) {
-    return client != -1;
-}
-
 static void init_hints(struct addrinfo *hints) {
     memset(hints, 0, sizeof(*hints));
     hints->ai_family   = AF_INET6;
@@ -55,7 +42,7 @@ static int accept_client(int server_sock) {
     return accept(server_sock, (struct sockaddr *)&addr, &len);
 }
 
-static int handle_initial_exchange(int client) {
+static int handle_exchange(int client) {
     char buf[128];
 
     if (recv_line(client, buf, sizeof(buf)) < 0)
@@ -71,10 +58,9 @@ static int handle_initial_exchange(int client) {
 
     return 0;
 }
-/* Helpers Region End */
 
 int run_server(int argc, char *argv[]) {
-    if (!valid_call(argc)) {
+    if (argc != 2) {
         fprintf(stderr, "usage: %s <port>\n", argv[0]);
         return 1;
     }
@@ -92,8 +78,8 @@ int run_server(int argc, char *argv[]) {
     int sock = bind_any_family(res);
     freeaddrinfo(res);
 
-    if (!valid_socket(sock)) {
-        fprintf(stderr, "error: bind failed for all families\n");
+    if (sock < 0) {
+        fprintf(stderr, "error: bind failed\n");
         return 1;
     }
 
@@ -106,14 +92,14 @@ int run_server(int argc, char *argv[]) {
     printf("Server listening on port %s...\n", port);
 
     int client = accept_client(sock);
-    if (!valid_client(client)) {
+    if (client < 0) {
         perror("accept");
         close(sock);
         return 1;
     }
 
-    if (handle_initial_exchange(client) < 0)
-        fprintf(stderr, "error during initial exchange\n");
+    if (handle_exchange(client) < 0)
+        fprintf(stderr, "error during exchange\n");
 
     close(client);
     close(sock);

@@ -4,3 +4,6 @@ server
 
 # Build
 /build/*
+
+# Editor
+.zed
