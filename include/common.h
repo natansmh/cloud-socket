@@ -12,12 +12,13 @@
 
 #define READY_MSG "READY"
 #define READY_ACK_MSG "READY ACK"
-#define BYE_MSG "bye"
+#define BYE_MSG "BYE"
 
 #define DEFAULT_BUF 1024
 
 int resolve_address(const char *host, const char *port, struct addrinfo **res);
 int send_all(int sock, const void *buf, size_t len);
 int recv_line(int sock, char *buf, size_t maxlen);
+int send_line(int sock, const char *line);
 
 #endif

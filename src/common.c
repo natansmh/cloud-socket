@@ -33,3 +33,20 @@ int recv_line(int sock, char *buf, size_t maxlen) {
     buf[pos] = '\0';
     return 0;
 }
+
+int send_line(int sock, const char *line) {
+    size_t len = strlen(line);
+
+    if (send_all(sock, line, len) < 0) {
+        perror("send_line: payload");
+        return -1;
+    }
+
+    const char newline = '\n';
+    if (send_all(sock, &newline, 1) < 0) {
+        perror("send_line: send newline");
+        return -1;
+    }
+
+    return 0;
+}

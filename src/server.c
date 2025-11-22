@@ -50,8 +50,8 @@ static int handle_exchange(int client) {
 
     printf("Server received: %s\n", buf);
 
-    send_all(client, READY_ACK_MSG, strlen(READY_ACK_MSG));
-    send_all(client, "\n", 1);
+    if (send_line(client, READY_ACK_MSG) < 0)
+        return -1;
 
     if (recv_line(client, buf, sizeof(buf)) == 0)
         printf("Server received: %s\n", buf);

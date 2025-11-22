@@ -4,8 +4,8 @@
 #include "../include/client.h"
 
 static int handle_exchange(int sock) {
-    send_all(sock, READY_MSG, strlen(READY_MSG));
-    send_all(sock, "\n", 1);
+    if (send_line(sock, READY_MSG) < 0)
+        return -1;
 
     char buf[128];
     if (recv_line(sock, buf, sizeof(buf)) < 0) {
@@ -15,8 +15,8 @@ static int handle_exchange(int sock) {
 
     printf("Client received: %s\n", buf);
 
-    send_all(sock, BYE_MSG, strlen(BYE_MSG));
-    send_all(sock, "\n", 1);
+    if (send_line(sock, BYE_MSG) < 0)
+        return -1;
 
     return 0;
 }
