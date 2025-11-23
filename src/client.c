@@ -1,25 +1,8 @@
+#include "../include/client.h"
+#include "../include/common.h"
+#include "../include/protocols.h"
 #include <netdb.h>
 #include <stdbool.h>
-#include "../include/common.h"
-#include "../include/client.h"
-
-static int handle_exchange(int sock) {
-    if (send_line(sock, READY_MSG) < 0)
-        return -1;
-
-    char buf[128];
-    if (recv_line(sock, buf, sizeof(buf)) < 0) {
-        fprintf(stderr, "error reading ACK\n");
-        return -1;
-    }
-
-    printf("Client received: %s\n", buf);
-
-    if (send_line(sock, BYE_MSG) < 0)
-        return -1;
-
-    return 0;
-}
 
 int run_client(int argc, char *argv[]) {
 
@@ -30,6 +13,7 @@ int run_client(int argc, char *argv[]) {
 
     const char *host = argv[1];
     const char *port = argv[2];
+    const char *directory = argv[3];
 
     struct addrinfo *res;
     if (resolve_address(host, port, &res) != 0) {
@@ -51,7 +35,7 @@ int run_client(int argc, char *argv[]) {
         return 1;
     }
 
-    if (handle_exchange(sock) < 0)
+    if (client_protocol(sock, directory) < 0)
         fprintf(stderr, "error during exchange\n");
 
     close(sock);

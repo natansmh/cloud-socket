@@ -13,6 +13,8 @@
 #define READY_MSG "READY"
 #define READY_ACK_MSG "READY ACK"
 #define BYE_MSG "BYE"
+#define OK_MSG "OK"
+#define DONE_MSG "DONE"
 
 #define DEFAULT_BUF 1024
 

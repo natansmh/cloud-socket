@@ -1,6 +1,7 @@
-#include <stdbool.h>
-#include "../include/common.h"
 #include "../include/server.h"
+#include "../include/common.h"
+#include "../include/protocols.h"
+#include <stdbool.h>
 
 static void init_hints(struct addrinfo *hints) {
     memset(hints, 0, sizeof(*hints));
@@ -42,23 +43,6 @@ static int accept_client(int server_sock) {
     return accept(server_sock, (struct sockaddr *)&addr, &len);
 }
 
-static int handle_exchange(int client) {
-    char buf[128];
-
-    if (recv_line(client, buf, sizeof(buf)) < 0)
-        return -1;
-
-    printf("Server received: %s\n", buf);
-
-    if (send_line(client, READY_ACK_MSG) < 0)
-        return -1;
-
-    if (recv_line(client, buf, sizeof(buf)) == 0)
-        printf("Server received: %s\n", buf);
-
-    return 0;
-}
-
 int run_server(int argc, char *argv[]) {
     if (argc != 2) {
         fprintf(stderr, "usage: %s <port>\n", argv[0]);
@@ -98,7 +82,7 @@ int run_server(int argc, char *argv[]) {
         return 1;
     }
 
-    if (handle_exchange(client) < 0)
+    if (server_protocol(client) < 0)
         fprintf(stderr, "error during exchange\n");
 
     close(client);

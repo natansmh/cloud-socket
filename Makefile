@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O2
 
-SRC = src/common.c src/client.c src/server.c
+SRC = src/common.c src/client.c src/server.c src/client_protocol.c src/server_protocol.c
 OBJ = $(SRC:src/%.c=build/%.o)
 
 CLIENT_MAIN = build/main_client.o
